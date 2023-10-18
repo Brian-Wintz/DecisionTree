@@ -1,0 +1,10 @@
+1. Note that the java classes need to be compiled using a java version that is compatible with the version used to run Tomcat
+2. The first time, it is necessary to create the servlet web application by creating a directory under the Tomcat webapps directory:
+   cd {tomcat}/webapps
+   mkdir -p decisiontree/WEB-INF/classes/com/bkw/dt
+3. Copy the compiled java programs (*.class files)  into their corresponding directories under the created decisiontree/WEB-INF/classes directory:
+   cp {github}/decisiontree/target/*.class {tomcat}/decisiontree/WEB-INF/classes
+   cp {github}/decisiontree/target/com/bkw/dt/*.class {tomcat}/decisiontree/WEB-INF/classes/com/bkw/dt
+4. Copy the web.xml file that has the servlet configuration required for Tomcat:
+   cp {github}/web/web.xml {tomcat}/decisontree/WEB-INF
+5. Start Tomcat
