@@ -106,6 +106,6 @@ public class DecisionTree {
         //System.out.println("Second Answer:"+answers.get(1)+":"+dt.getQuestion("1.2"));
         //System.out.println("Third Answer:"+answers.get(2)+":"+dt.getQuestion("1.3"));
 
-        
+
     }
 }

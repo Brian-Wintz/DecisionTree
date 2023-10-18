@@ -31,7 +31,7 @@ public class Question {
         answer.setLastQuestionKey(this.key);
         answers.add(answer);
     }
-    
+
     public String getKey() {
         return key;
     }

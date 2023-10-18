@@ -5,7 +5,7 @@ public class Answer {
     private String text;
     private String nextQuestionKey;
     private String lastQuestionKey;
-    
+
     public Answer(String key,String text,String nextQuestionKey) {
         this.key=key;
         this.text=text;
@@ -51,9 +51,9 @@ public class Answer {
         result+="\n        \"Key\": \""+this.key+"\"";
     	result+=",\n        \"Text\": \""+this.text+"\"";
         if(this.nextQuestionKey!=null)
-            result+=",\n        \"NextQuestionKey\": \""+this.nextQuestionKey+"\"";        
+            result+=",\n        \"NextQuestionKey\": \""+this.nextQuestionKey+"\"";
         if(this.lastQuestionKey!=null)
-            result+=",\n        \"LastQuestionKey\": \""+this.lastQuestionKey+"\"";        
+            result+=",\n        \"LastQuestionKey\": \""+this.lastQuestionKey+"\"";
         result+="\n      }";
         return result;
     }

@@ -27,13 +27,13 @@
      Repository for translated string data
   </description>
 
-  <servlet>
+<servlet>
     <servlet-name>DecisionTree</servlet-name>
     <servlet-class>com.bkw.dt.DecisionTreeServlet</servlet-class>
-  </servlet>
+</servlet>
 
-  <servlet-mapping>
+<servlet-mapping>
     <servlet-name>DecisionTree</servlet-name>
-    <url-pattern>/decisionTree/question</url-pattern>
-  </servlet-mapping>
+    <url-pattern>/question</url-pattern>
+</servlet-mapping>
 </web-app>
