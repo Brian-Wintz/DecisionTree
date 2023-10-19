@@ -29,11 +29,11 @@
 
 <servlet>
     <servlet-name>DecisionTree</servlet-name>
-    <servlet-class>com.bkw.dt.DecisionTreeServlet</servlet-class>
+    <servlet-class>DecisionTreeServlet</servlet-class>
 </servlet>
 
 <servlet-mapping>
     <servlet-name>DecisionTree</servlet-name>
-    <url-pattern>/question</url-pattern>
+    <url-pattern>/</url-pattern>
 </servlet-mapping>
 </web-app>

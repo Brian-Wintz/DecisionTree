@@ -77,6 +77,8 @@ public class DecisionTree {
                 selectedAnswers.add(answer);
                 Question question=dt.get(answer.getLastQuestionKey());
                 answerKey=question.getLastAnswerKey();
+            } else {
+                answerKey=null;
             }
         }
         return selectedAnswers;
