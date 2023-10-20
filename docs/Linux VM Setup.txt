@@ -1,5 +1,5 @@
-1. Download linux x64 OpenJDK (tar.gz):
-2. Download latest Apache Tomcat (tar.gz):
+1. Download linux x64 OpenJDK (tar.gz): https://jdk.java.net/21/
+2. Download latest Apache Tomcat (tar.gz): https://tomcat.apache.org/download-80.cgi
 3. Copy downloaded tar.gz files to linux VM
 4. Create directories for Tomcat and java:
    cd
@@ -11,8 +11,8 @@
    cd ~/apache
    tar -xzf apache-tomcat*.tgz
 6. Configure environment variables in .profile
-   export JAVA_HOME=~/java/openjdk...
-   export JDK_HOME=~/java/openjdk...
+   export JAVA_HOME=~/java/jdk-21.0.1
+   export JDK_HOME=~/java/jdk-21.0.1
    export PATH=$PATH:$JAVA_HOME/bin
 7. logout and log back in to establish necessary environment variables
 8. Launch Tomcat:
