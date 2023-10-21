@@ -15,18 +15,19 @@ import com.bkw.dt.Question;
 
 public class DecisionTreeServlet extends HttpServlet {
 
-    protected String escapeSQL(String value) {
-        value.replace("%","\\%");
-        value.replace("_","\\_");
-        return value;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         String requestURI=request.getRequestURI();
 
         DecisionTree dt=new DecisionTree();
+        // Resets the decision tree's internal maps to null to force a subsequent reload of data
+        if(requestURI.endsWith("reset")) {
+            dt.reset();
+            return;
+        }
+
+        // Load the decision tree, if not previously loaded or has been reset
         dt.readFile("com/bkw/dt/dt1.txt");
 
         // Retrieve question for specified question key
