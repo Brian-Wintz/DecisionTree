@@ -77,6 +77,14 @@ The details for these classes is provided below:
     public static Question createQuestion(String text): From a question line in a decision tree input file, creates a Question instance (see below for file format details)
     public static Answer createAnswer(String text,String parentQuestionKey,boolean isTerminal): From an answer or terminal answer in a decision tree input file, Creates an Answer instance with the specified parent question key (see below for file format details)
 
+### DecisionTreeServlet
+
+#### Methods
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException: Processes a GET REST API request which supports the following REST requests:
+    question[?key={question key value}]: Returns specified question key data, or base question if key is not specified
+    answers?key={answer key value}: Returns all answers within the decision tree which result in the specified answer (including the specified answer)
+    reset: Forces a reload of the decision tree, sets the decision tree's internal questions and maps values to null to cause them to be reloaded
+
 ## Decision Tree File Format
 
 The general format for a line of text in this file is as follows:
