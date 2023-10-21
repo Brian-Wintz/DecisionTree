@@ -124,3 +124,16 @@ T 1.2.1 Rabit
 T 1.2.2 Squirrel
 ```
 A sample dt1.txt decision tree is available in the src/com/bkw/dt directory which is used for testing.
+
+### REST API Testing
+These REST APIs have been deployed to a google cloud VM and can be accessed through a web browser by calling the following URLs:
+
+Retrieve a question with its answers (key is not needed if requesting a top level question).  The question key values are of the form "N[.N]..." where each question's answer points to the next level question key:<br><br>
+    http://34.82.132.4/decisiontree/question[?key={question key}]
+
+Retrieve the chain of answers for a given answer key, including the specified answer.  Answer key values are also in the "N[.N]..." form.<br><br>
+    http://34.82.132.4/decisiontree/answers?key={answer key}
+
+Clear out the decision tree to force a reload of the data from the file (used to deploy changes with a new decision tree file without bringing the system down).<br><br>
+    http://34.82.132.4/decisiontree/reset
+
