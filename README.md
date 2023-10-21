@@ -92,7 +92,7 @@ Where {Q|A|T} determines what the line is for:
 The {text} value represents the text corresponding to either the question or the answer
 
 Note that the lines for all answers must come immediately after the question which they are for.  So the following represents a valid decision tree file format:
-
+```
 Q 1 How big is it?
 A 1.1 Small
 A 1.2 Medium
@@ -102,9 +102,9 @@ T 1.1.2 Quark
 Q 1.2 Is it a?
 T 1.2.1 Rabit
 T 1.2.2 Squirrel
-
+```
 Whereas the following is not correct because all the answers do not occur immediately after the question which parents them (question 1.1, with its answers comes before answer 1.2):
-
+```
 Q 1 How big is it?
 A 1.1 Small
 Q 1.1 Is it a?
@@ -114,5 +114,5 @@ A 1.2 Medium
 Q 1.2 Is it a?
 T 1.2.1 Rabit
 T 1.2.2 Squirrel
-
+```
 A sample dt1.txt decision tree is available in the src/com/bkw/dt directory which is used for testing.
