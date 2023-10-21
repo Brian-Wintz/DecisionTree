@@ -26,6 +26,9 @@ public class DecisionTreeServlet extends HttpServlet {
         throws ServletException, IOException {
         String requestURI=request.getRequestURI();
 
+        DecisionTree dt=new DecisionTree();
+        dt.readFile("com/bkw/dt/dt1.txt");
+
         // Retrieve question for specified question key
         if(requestURI.endsWith("question")) {
             Map<String,String[]> parameterMap=request.getParameterMap();
@@ -35,7 +38,6 @@ public class DecisionTreeServlet extends HttpServlet {
                 key=vals[0];
             }
 
-            DecisionTree dt=new DecisionTree();
             Question question=dt.getQuestion(key);
             String json=question.toJSONString();
             response.setContentType("application/json");
@@ -52,9 +54,8 @@ public class DecisionTreeServlet extends HttpServlet {
                 key=vals[0];
             }
 
-            DecisionTree dt=new DecisionTree();
             List<Answer> answers=dt.getSelectedAnswers(key);
-            String json="{\n  \"Answers\": [\n";
+            String json="{\n  \"answers\": [\n";
             boolean isFirst=true;
             for(Answer answer: answers) {
                 json+=(!isFirst?",\n":"");

@@ -11,8 +11,8 @@
    cd ~/apache
    tar -xzf apache-tomcat*.tgz
 6. Configure environment variables in .profile
-   export JAVA_HOME=~/java/openjdk...
-   export JDK_HOME=~/java/openjdk...
+   export JAVA_HOME=/home/bkwintz/java/jdk-21.0.1
+   export JDK_HOME=/home/bkwintz/java/jdk-21.0.1
    export PATH=$PATH:$JAVA_HOME/bin
 7. logout and log back in to establish necessary environment variables
 8. Launch Tomcat:

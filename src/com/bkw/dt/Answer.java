@@ -13,19 +13,6 @@ public class Answer {
         this.lastQuestionKey=null;
     }
 
-    public Answer(String key,String text,String nextQuestionKey,String lastQuestionKey) {
-        this.key=key;
-        this.text=text;
-        this.nextQuestionKey=nextQuestionKey;
-        this.lastQuestionKey=lastQuestionKey;
-    }
-
-    public Answer(String key,String text) {
-        this.key=key;
-        this.text=text;
-        this.nextQuestionKey=null;
-    }
-
     public String getKey() {
         return key;
     }
@@ -48,12 +35,12 @@ public class Answer {
 
     public String toJSONString() {
         String result="      {";
-        result+="\n        \"Key\": \""+this.key+"\"";
-    	result+=",\n        \"Text\": \""+this.text+"\"";
+        result+="\n        \"key\": \""+this.key+"\"";
+        result+=",\n        \"text\": \""+this.text+"\"";
         if(this.nextQuestionKey!=null)
-            result+=",\n        \"NextQuestionKey\": \""+this.nextQuestionKey+"\"";
+            result+=",\n        \"nextQuestionKey\": \""+this.nextQuestionKey+"\"";
         if(this.lastQuestionKey!=null)
-            result+=",\n        \"LastQuestionKey\": \""+this.lastQuestionKey+"\"";
+            result+=",\n        \"lastQuestionKey\": \""+this.lastQuestionKey+"\"";
         result+="\n      }";
         return result;
     }

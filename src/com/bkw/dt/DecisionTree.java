@@ -3,70 +3,103 @@ package com.bkw.dt;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
 public class DecisionTree {
-    public Map<String,Question> dt;
-    public Map<String,Answer> answers;
+    private static Map<String,Question> questions;
+    private static Map<String,Answer> answers;
 
     public DecisionTree() {
-        List<Question> questions=new LinkedList<Question>();
-        Question q=new Question("1","How big is it?");
-        q.addAnswer(new Answer("A1","Small","1.1"));
-        q.addAnswer(new Answer("A2","Medium","1.2"));
-        q.addAnswer(new Answer("A3","Large","1.3"));
-        questions.add(q);
-
-        q=new Question("1.3","Is it a?");
-        q.addAnswer(new Answer("B1","Whale"));
-        q.addAnswer(new Answer("B2","Elephant"));
-        questions.add(q);
-
-        q=new Question("1.2","Is it a?");
-        q.addAnswer(new Answer("C1","Rabbit"));
-        q.addAnswer(new Answer("C2","Squirrel"));
-        questions.add(q);
-
-        q=new Question("1.1","Is it a?");
-        q.addAnswer(new Answer("C1","Atom"));
-        q.addAnswer(new Answer("C2","Quark"));
-        questions.add(q);
-
-        dt=new HashMap<String,Question>();
-        this.answers=new HashMap<String,Answer>();
-        this.addQuestions(questions);
-
     }
+
     public DecisionTree(List<Question> questions) {
-        dt=new HashMap<String,Question>();
-        this.answers=new HashMap<String,Answer>();
-        this.addQuestions(questions);
+        if(questions!=null) return;
+        setDecisionTree(questions);
     }
 
-    public void addQuestions(List<Question> questions) {
+    public void setDecisionTree(List<Question> qstns) {
+        questions=new HashMap<String,Question>();
+        answers=new HashMap<String,Answer>();
+        this.addQuestions(qstns);
+    }
+
+    public void reset() {
+        questions=null;
+        answers=null;
+    }
+
+    public void readFile(String filename) {
+        if(questions!=null) return;
+
+        // Find the specified file on the classpath
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        java.net.URL url=classLoader.getResource(filename);
+        String file=(url!=null?url.getFile():null);
+        //System.out.println("URL:"+url+":"+file);
+
+        BufferedReader reader;
+        List<Question> qstns=new LinkedList<Question>();
+        Question question=null;
+
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String line = reader.readLine();
+
+			while (line != null) {
+                if(line.startsWith("Q")) {
+                    question=createQuestion(line);
+                    qstns.add(question);
+                } else {
+                    if(line.startsWith("A")) {
+                        Answer answer=createAnswer(line,question.getKey(),false);
+                        if(question!=null) question.addAnswer(answer);
+                    } else {
+                        if(line.startsWith("T")) {
+                            Answer answer=createAnswer(line,question.getKey(),true);
+                            if(question!=null) question.addAnswer(answer);
+                        }
+                    }
+
+                }
+				// read next line
+				line = reader.readLine();
+			}
+
+			reader.close();
+            setDecisionTree(qstns);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+
+    public void addQuestions(List<Question> qstns) {
         // First add all the questions to the map, by question key
-        for(Question question: questions) {
-            dt.put(question.getKey(),question);
+        for(Question question: qstns) {
+            questions.put(question.getKey(),question);
         }
 
         // Next, resolve the parent answer key for each question
-        for(Question question: questions) {
+        for(Question question: qstns) {
             List<Answer> answers=question.getAnswers();
             for(Answer answer: answers) {
                 this.answers.put(answer.getKey(),answer);
                 String nextQuestionKey=answer.getNextQuestionKey();
                 if(nextQuestionKey!=null) {
-                    Question q=dt.get(nextQuestionKey);
+                    Question q=questions.get(nextQuestionKey);
                     q.setLastAnswerKey(answer.getKey());
                 }
             }
         }
 
     }
+
     public Question getQuestion(String key) {
         if(key==null) key="1";
-        return dt.get(key);
+        return questions.get(key);
     }
 
     public List<Answer> getSelectedAnswers(String answerKey) {
@@ -75,7 +108,7 @@ public class DecisionTree {
             Answer answer=answers.get(answerKey);
             if(answer!=null) {
                 selectedAnswers.add(answer);
-                Question question=dt.get(answer.getLastQuestionKey());
+                Question question=questions.get(answer.getLastQuestionKey());
                 answerKey=question.getLastAnswerKey();
             } else {
                 answerKey=null;
@@ -87,17 +120,39 @@ public class DecisionTree {
     @Override
     public String toString() {
         String result="";
-        Set<String> keys=dt.keySet();
+        Set<String> keys=questions.keySet();
         for(String key: keys) {
-            Question question=dt.get(key);
+            Question question=questions.get(key);
             result+=(result.length()>0?"\n":"")+question.toString();
         }
         return result;
     }
 
+    public static Question createQuestion(String text) {
+        Question question=null;
+        int index1=text.indexOf(" ");
+        int index2=text.indexOf(" ",index1+1);
+        String key=text.substring(index1+1, index2);
+        String txt=text.substring(index2+1);
+        question=new Question(key,txt);
+        return question;
+    }
+
+    public static Answer createAnswer(String text,String parentQuestionKey,boolean isTerminal) {
+        Answer answer=null;
+        int index1=text.indexOf(" ");
+        int index2=text.indexOf(" ",index1+1);
+        String key=text.substring(index1+1, index2);
+        String txt=text.substring(index2+1);
+        answer=new Answer(key,txt,(!isTerminal?key:null));
+        answer.setLastQuestionKey(parentQuestionKey);
+        return answer;
+    }
+
     public static void main(String[] args) {
         DecisionTree dt=new DecisionTree();
 
+/***
         System.out.println(dt.toString());
 
         Question q=dt.getQuestion("1");
@@ -107,7 +162,10 @@ public class DecisionTree {
         //System.out.println("First Answer:"+answers.get(0)+":"+dt.getQuestion("1.1"));
         //System.out.println("Second Answer:"+answers.get(1)+":"+dt.getQuestion("1.2"));
         //System.out.println("Third Answer:"+answers.get(2)+":"+dt.getQuestion("1.3"));
-
-
+***/
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        dt.reset();
+        dt.readFile("com/bkw/dt/dt1.txt");
+        System.out.println("dt:"+dt);
     }
 }

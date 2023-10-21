@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.LinkedList;
 
 public class Question {
-    private String text;
     private String key;
+    private String text;
     private List<Answer> answers;
     private String lastAnswerKey;
 
@@ -53,18 +53,18 @@ public class Question {
     }
 
     public String toJSONString() {
-        String result="{\n  \"Question\": {";
-        result+="\n    \"Key\": \""+this.key+"\"";
-	    result+=",\n    \"Text\": \""+this.text+"\"";
-        result+=",\n    \"Answers\": [\n";
+        String result="{\n  \"question\": {";
+        result+="\n    \"key\": \""+this.key+"\"";
+        result+=",\n    \"text\": \""+this.text+"\"";
+        result+=",\n    \"answers\": [\n";
         boolean isFirst=true;
         for(Answer answer: answers) {
             result+=(!isFirst?",\n":"");
             result+=answer.toJSONString();
             isFirst=false;
         }
-	    result+="\n]}}";
-	    return result;
+        result+="\n]}}";
+        return result;
     }
 
     @Override
