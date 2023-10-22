@@ -21,7 +21,7 @@
                redirectPort="443"
                maxParameterCount="1000"
                />
-9. Launch Tomcat - Note that in order to run on the above reports it must be run under root:
+9. Launch Tomcat - Note that in order to run on the above standard web browser ports (80/443) Tomcat must be run by the root user, sudo bash is used to create a shell running as root:
    cd ~/apache/apache-tomcat.../bin
    sudo bash
    export JAVA_HOME=/home/bkwintz/java/jdk-21.0.1
