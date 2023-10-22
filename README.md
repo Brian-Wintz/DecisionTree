@@ -77,6 +77,10 @@ The details for these classes is provided below:
     public static Question createQuestion(String text): From a question line in a decision tree input file, creates a Question instance (see below for file format details)
     public static Answer createAnswer(String text,String parentQuestionKey,boolean isTerminal): From an answer or terminal answer in a decision tree input file, Creates an Answer instance with the specified parent question key (see below for file format details)
 
+### OpenAI
+    public static String chatGPT(String message): Process the provided message as a prompt to ChatGPT 3.5 and returns the resulting reply.
+    public static String extractContentFromResponse(String response): Extracts the reply from the response to a ChatGPT 3.5 REST API call.
+    
 ### DecisionTreeServlet
 
 #### Methods
@@ -84,7 +88,8 @@ The details for these classes is provided below:
     question[?key={question key value}]: Returns specified question key data, or base question if key is not specified
     answers?key={answer key value}: Returns all answers within the decision tree which result in the specified answer (including the specified answer)
     reset: Forces a reload of the decision tree, sets the decision tree's internal questions and maps values to null to cause them to be reloaded
-
+    openai?message={message}: Processes a prompt request to OpenAI, returning the resulting reply
+    
 ## Decision Tree File Format
 
 The general format for a line of text in this file is as follows:
@@ -124,3 +129,18 @@ T 1.2.1 Rabit
 T 1.2.2 Squirrel
 ```
 A sample dt1.txt decision tree is available in the src/com/bkw/dt directory which is used for testing.
+
+### REST API Testing
+These REST APIs have been deployed to a google cloud VM and can be accessed through a web browser by calling the following URLs:
+
+Retrieve a question with its answers (key is not needed if requesting a top level question).  The question key values are of the form "N[.N]..." where each question's answer points to the next level question key:<br><br>
+    http://34.82.132.4/decisiontree/question[?key={question key}]
+
+Retrieve the chain of answers for a given answer key, including the specified answer.  Answer key values are also in the "N[.N]..." form.<br><br>
+    http://34.82.132.4/decisiontree/answers?key={answer key}
+
+Clear out the decision tree to force a reload of the data from the file (used to deploy changes with a new decision tree file without bringing the system down).<br><br>
+    http://34.82.132.4/decisiontree/reset
+
+Make a prompt request to OpenAI.<br><br>
+    http://34.82.132.4/decisiontree/openai?message=Say%20hello
