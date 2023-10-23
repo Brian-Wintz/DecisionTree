@@ -20,24 +20,6 @@ public class DecisionTreeServlet extends HttpServlet {
         throws ServletException, IOException {
         String requestURI=request.getRequestURI();
 
-        if(requestURI.endsWith("openai")) {
-            Map<String,String[]> parameterMap=request.getParameterMap();
-            String message=null;
-            String[] vals=parameterMap.get("message");
-            if(vals!=null && vals.length>0) {
-                message=vals[0];
-            }
-            if(message!=null) {
-                String reply=OpenAI.chatGPT(message);
-                String json="{ \"request\": \""+message+"\", \"reply\": \""+reply+"\" }";
-                response.setContentType("application/json");
-                PrintWriter out = response.getWriter();
-                out.println(json);
-            }
-
-            return;
-        }
-
         DecisionTree dt=new DecisionTree();
         // Resets the decision tree's internal maps to null to force a subsequent reload of data
         if(requestURI.endsWith("reset")) {

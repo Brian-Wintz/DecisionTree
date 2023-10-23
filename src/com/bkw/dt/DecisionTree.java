@@ -22,18 +22,18 @@ public class DecisionTree {
     }
 
     public void setDecisionTree(List<Question> qstns) {
-        questions=new HashMap<String,Question>();
-        answers=new HashMap<String,Answer>();
+        DecisionTree.questions=new HashMap<String,Question>();
+        DecisionTree.answers=new HashMap<String,Answer>();
         this.addQuestions(qstns);
     }
 
     public void reset() {
-        questions=null;
-        answers=null;
+        DecisionTree.questions=null;
+        DecisionTree.answers=null;
     }
 
     public void readFile(String filename) {
-        if(questions!=null) return;
+        if(DecisionTree.questions!=null) return;
 
         // Find the specified file on the classpath
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -86,7 +86,7 @@ public class DecisionTree {
         for(Question question: qstns) {
             List<Answer> answers=question.getAnswers();
             for(Answer answer: answers) {
-                this.answers.put(answer.getKey(),answer);
+                DecisionTree.answers.put(answer.getKey(),answer);
                 String nextQuestionKey=answer.getNextQuestionKey();
                 if(nextQuestionKey!=null) {
                     Question q=questions.get(nextQuestionKey);
