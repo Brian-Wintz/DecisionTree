@@ -22,19 +22,9 @@ public class OpenAI {
         return decoded;
 
     }
-    public static void main(String[] args) {
-/***
-        String txt="{OpenAI Key}";
-        String encoded=encode(txt);
-        String decoded=decode(encoded);
-        System.out.println("txt="+txt+" encoded="+encoded+" decoded="+decoded);
-***/
 
-/***/
-        // Print the response from the chatGPT method to the console.
-        //System.out.println(chatGPT("hello, how are you?"));
+    public static String getCategoryForUserInput(String input) {
         String template="Choose a category most relevant to {input} from the following categories {categories} tell me the category only with no other text.";
-        String input="my child is sad because we have moved and he is attending a new school in a different city";
         String categories=
             "1.Emotional Well-being and Mental Health: Stories that address topics like anxiety, depression, self-esteem, and coping with emotions can help children understand and manage their feelings. These stories often feature relatable characters and scenarios that offer strategies for emotional well-being. "+
             "2.Diversity and Inclusion: Stories that celebrate diversity, promote inclusivity, and address issues like racism, discrimination, and bullying can help children learn about empathy, respect, and the value of differences. "+
@@ -56,10 +46,22 @@ public class OpenAI {
         String prompt=template.replace("{input}",input);
         prompt=prompt.replace("{categories}",categories);
 
-        //System.out.println("prompt:"+template+":"+prompt);
+        System.out.println("##prompt:"+template+":"+prompt);
 
-        System.out.println("AI response:"+chatGPT(prompt));
-/***/
+        String reply=chatGPT(prompt);
+        System.out.println("##reply:"+reply);
+
+        return reply;
+
+    }
+    public static void main(String[] args) {
+/***
+        String txt="{OpenAI Key}";
+        String encoded=encode(txt);
+        String decoded=decode(encoded);
+        System.out.println("txt="+txt+" encoded="+encoded+" decoded="+decoded);
+***/
+
     }
 
     // This method sends a message to the GPT-3.5 Turbo model and retrieves a response.

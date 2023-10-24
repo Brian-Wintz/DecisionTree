@@ -1,6 +1,8 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +14,47 @@ import javax.servlet.http.HttpServletResponse;
 import com.bkw.dt.Answer;
 import com.bkw.dt.DecisionTree;
 import com.bkw.dt.Question;
+import com.google.gson.Gson;
 
 public class DecisionTreeServlet extends HttpServlet {
+
+        @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        String requestURI=request.getRequestURI();
+
+        // Retrieve a category using AI to pick which category best matches the user input
+        if(requestURI.endsWith("usercategory")) {
+            // Extract json from posted data and convert to a new TranslatedString instance
+            Reader body=request.getReader();
+            StringBuilder sb=new StringBuilder();
+            char c[]=new char[100];
+            try {
+                int chars=body.read(c);
+                while(chars>0) {
+                    sb.append(c,0,chars);
+                    chars=body.read(c);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            String json=sb.toString();
+System.out.println("##JSON1:"+json);
+            //json=java.net.URLDecoder.decode(json, StandardCharsets.UTF_8.toString());
+            Gson gson=new Gson();
+            UserCategory uc=gson.fromJson(json, UserCategory.class);
+System.out.println("##UC:"+uc);
+            String userInput=uc.getUserInput();
+            String reply=OpenAI.getCategoryForUserInput(userInput);
+            uc.setAIResponse(reply);
+            json=gson.toJson(uc);
+System.out.println("##JSON2:"+json);
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            out.println(json);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
