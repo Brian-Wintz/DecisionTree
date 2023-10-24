@@ -80,7 +80,18 @@ The details for these classes is provided below:
 ### OpenAI
     public static String chatGPT(String message): Process the provided message as a prompt to ChatGPT 3.5 and returns the resulting reply.
     public static String extractContentFromResponse(String response): Extracts the reply from the response to a ChatGPT 3.5 REST API call.
-    
+    public static String getCategoryForUserInput(String input): Calls OpenAI to determine the category which best matches user input.
+### UserCategory
+
+####  Attributes
+    private String userInput: Used to hold the user's input text
+    private String aiResponse: Used to hold OpenAI's selected category based on the user's input
+#### Methods
+    public void setUserInput(String input): Assigns the user's input
+    public String getUserInput(): Retrieves the user's input
+    public void setAIResponse(String response): Assigns the returned text for which category was selected by OpenAI for the user's text
+    public String getAIResponse(): Retrieves the OpenAI selected category
+
 ### DecisionTreeServlet
 
 #### Methods
@@ -88,8 +99,16 @@ The details for these classes is provided below:
     question[?key={question key value}]: Returns specified question key data, or base question if key is not specified
     answers?key={answer key value}: Returns all answers within the decision tree which result in the specified answer (including the specified answer)
     reset: Forces a reload of the decision tree, sets the decision tree's internal questions and maps values to null to cause them to be reloaded
-    openai?message={message}: Processes a prompt request to OpenAI, returning the resulting reply
-    
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    usercategory: Takes user input as posted JSON and returns the best matching category
+    Posted JSON input:
+        { "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction" }
+    Resulting JSON output:
+        {
+        "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction",
+        "aiResponse": "1. Emotional Well-being and Mental Health"
+        }
+        
 ## Decision Tree File Format
 
 The general format for a line of text in this file is as follows:
