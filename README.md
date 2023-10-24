@@ -161,5 +161,12 @@ Retrieve the chain of answers for a given answer key, including the specified an
 Clear out the decision tree to force a reload of the data from the file (used to deploy changes with a new decision tree file without bringing the system down).<br><br>
     http://34.82.132.4/decisiontree/reset
 
-Make a prompt request to OpenAI.<br><br>
-    http://34.82.132.4/decisiontree/openai?message=Say%20hello
+Request OpenAI to determine which category best matches user's free form text input (POST).<br><br>
+    http://34.82.132.4/decisiontree/usercategory
+    Posted data:
+        { "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction" }
+    Returned data:
+        {
+            "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction",
+            "aiResponse": "1. Emotional Well-being and Mental Health"
+        }
