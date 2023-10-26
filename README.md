@@ -155,8 +155,34 @@ These REST APIs have been deployed to a google cloud VM and can be accessed thro
 Retrieve a question with its answers (key is not needed if requesting a top level question).  The question key values are of the form "N[.N]..." where each question's answer points to the next level question key:<br><br>
     http://34.82.132.4/decisiontree/question[?key={question key}]
 
+    http://34.82.132.4/decisiontree/question?key=1.3
+
+    {
+      "question": {"key": "1.3", "text": "Is it larger than a house?", "answers": [
+          {"key": "1.3.1", "text": "Yes", "nextQuestionKey": "1.3.1", "lastQuestionKey": "1.3"},
+          {"key": "1.3.2", "text": "No", "nextQuestionKey": "1.3.2", "lastQuestionKey": "1.3"}
+    ]}}
+
 Retrieve the chain of answers for a given answer key, including the specified answer.  Answer key values are also in the "N[.N]..." form.<br><br>
     http://34.82.132.4/decisiontree/answers?key={answer key}
+
+    http://34.82.132.4/decisiontree/answers?key=1.3.1.2
+
+    {
+      "answers": [
+    {
+      "question": {"key": "1.3.1", "text": "Is it a?", "answers": [
+          {"key": "1.3.1.2", "text": "Dinosaur"}
+    ]}},
+    {
+      "question": {"key": "1.3", "text": "Is it larger than a house?", "answers": [
+          {"key": "1.3.1", "text": "Yes"}
+    ]}},
+    {
+      "question": {"key": "1", "text": "How big is it?", "answers": [
+          {"key": "1.3", "text": "Large"}
+    ]}}
+    ]}
 
 Clear out the decision tree to force a reload of the data from the file (used to deploy changes with a new decision tree file without bringing the system down).<br><br>
     http://34.82.132.4/decisiontree/reset
