@@ -102,13 +102,25 @@ public class DecisionTree {
         return questions.get(key);
     }
 
-    public List<Answer> getSelectedAnswers(String answerKey) {
-        List<Answer> selectedAnswers=new LinkedList<Answer>();
+    public List<Question> getSelectedAnswers(String answerKey) {
+        List<Question> selectedAnswers=new LinkedList<Question>();
         while(answerKey!=null) {
             Answer answer=answers.get(answerKey);
             if(answer!=null) {
-                selectedAnswers.add(answer);
+                // Create a new Question from this answer's question with only the key and text values set
                 Question question=questions.get(answer.getLastQuestionKey());
+                Question qstn=new Question(question.getKey(),question.getText());
+                // Create a new Answer instance from this answer with only the key and text values set
+                Answer answr=new Answer(answer.getKey(),answer.getText(),null);
+                qstn.addAnswer(answr);
+                // Since adding the answer to the question assigns the lastQuestionKey value, need to null it out afterwards
+                answr.setLastQuestionKey(null);
+
+                selectedAnswers.add(qstn);
+/***
+                selectedAnswers.add(question);
+                selectedAnswers.add(answer);
+***/
                 answerKey=question.getLastAnswerKey();
             } else {
                 answerKey=null;

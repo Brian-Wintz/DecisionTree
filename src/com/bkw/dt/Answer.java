@@ -35,13 +35,13 @@ public class Answer {
 
     public String toJSONString() {
         String result="      {";
-        result+="\n        \"key\": \""+this.key+"\"";
-        result+=",\n        \"text\": \""+this.text+"\"";
+        result+="\"key\": \""+this.key+"\"";
+        result+=", \"text\": \""+this.text+"\"";
         if(this.nextQuestionKey!=null)
-            result+=",\n        \"nextQuestionKey\": \""+this.nextQuestionKey+"\"";
+            result+=", \"nextQuestionKey\": \""+this.nextQuestionKey+"\"";
         if(this.lastQuestionKey!=null)
-            result+=",\n        \"lastQuestionKey\": \""+this.lastQuestionKey+"\"";
-        result+="\n      }";
+            result+=", \"lastQuestionKey\": \""+this.lastQuestionKey+"\"";
+        result+="}";
         return result;
     }
 

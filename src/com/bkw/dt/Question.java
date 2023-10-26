@@ -54,9 +54,9 @@ public class Question {
 
     public String toJSONString() {
         String result="{\n  \"question\": {";
-        result+="\n    \"key\": \""+this.key+"\"";
-        result+=",\n    \"text\": \""+this.text+"\"";
-        result+=",\n    \"answers\": [\n";
+        result+="\"key\": \""+this.key+"\"";
+        result+=", \"text\": \""+this.text+"\"";
+        result+=", \"answers\": [\n";
         boolean isFirst=true;
         for(Answer answer: answers) {
             result+=(!isFirst?",\n":"");

@@ -96,15 +96,7 @@ System.out.println("##JSON2:"+json);
                 key=vals[0];
             }
 
-            List<Answer> answers=dt.getSelectedAnswers(key);
-            String json="{\n  \"answers\": [\n";
-            boolean isFirst=true;
-            for(Answer answer: answers) {
-                json+=(!isFirst?",\n":"");
-                json+=answer.toJSONString();
-                isFirst=false;
-            }
-            json+="\n]}";
+            String json=convertAnswersToJSON(dt,key);
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             out.println(json);
@@ -112,11 +104,26 @@ System.out.println("##JSON2:"+json);
 
     }
 
+    public static String convertAnswersToJSON(DecisionTree dt,String answerKey) {
+            List<Question> answers=dt.getSelectedAnswers(answerKey);
+            String json="{\n  \"answers\": [\n";
+            boolean isFirst=true;
+            for(Question question: answers) {
+                json+=(!isFirst?",\n":"");
+                json+=question.toJSONString();
+                isFirst=false;
+            }
+            json+="\n]}";
+        return json;
+    }
+
     public static void main(String[] args) {
         DecisionTree dt=new DecisionTree();
-
-        Question question=dt.getQuestion("1");
-        System.out.println(question.toJSONString());
+        dt.readFile("com/bkw/dt/dt1.txt");
+        //Question question=dt.getQuestion("1");
+        //System.out.println(question.toJSONString());
+        String json=convertAnswersToJSON(dt,"1.3.2.3");
+        System.out.println("json:"+json);
     }
 
 }
