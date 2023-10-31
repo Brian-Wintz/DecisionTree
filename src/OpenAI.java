@@ -23,38 +23,29 @@ public class OpenAI {
 
     }
 
-    public static String getCategoryForUserInput(String input) {
+    public static UserCategory getCategoryForUserInput(String input) {
         String template="Choose a category most relevant to {input} from the following categories {categories} tell me the category only with no other text.";
-/***
         String categories=
             "1.1 Small: Size of item is less than or equal to  5 centimeters in height, width or depth. "+
-            "1.2 Medium: Size of item is greater than 5 centimeters in height, width or depth and less than or eqal to 20 meters in height, width or depth. "+
+            "1.2 Medium: Size of item is greater than 5 centimeters in height, width or depth and less than or equal to 20 meters in height, width or depth. "+
             "1.3 Large: Size of item is greater than 20 meters in height, width or depth.";
-***/
-/***/
-            String categories=
-            "1.1 Emotional Well-being and Mental Health: Stories that address topics like anxiety, depression, self-esteem, and coping with emotions can help children understand and manage their feelings. These stories often feature relatable characters and scenarios that offer strategies for emotional well-being. "+
-            "1.2 Diversity and Inclusion: Stories that celebrate diversity, promote inclusivity, and address issues like racism, discrimination, and bullying can help children learn about empathy, respect, and the value of differences. "+
-            "1.3 Resilience and Perseverance: Stories that showcase characters facing adversity, overcoming challenges, and never giving up can inspire children to be resilient and tenacious in their own lives. "+
-            "1.4 Friendship and Social Skills: Stories that focus on building and maintaining healthy friendships, resolving conflicts, and improving social skills can be beneficial for children who struggle with peer relationships. "+
-            "1.5 Grief and Loss: Stories that deal with themes of grief, loss, and coping with the death of a loved one can provide comfort and guidance for children facing these difficult situations. "+
-            "1.6 Education and Learning: Educational stories that explain complex concepts or introduce new subjects in an engaging and understandable way can help children with their studies. "+
-            "1.7 Health and Well-being: Stories about healthy eating, exercise, hygiene, and self-care can promote good habits and awareness of personal well-being. "+
-            "1.8 Safety and Awareness: Stories that address safety topics like stranger danger, fire safety, and personal boundaries can help children stay safe and informed. "+
-            "1.9 Environmental and Conservation Awareness: Stories that teach children about the environment, conservation, and the importance of protecting nature can inspire a sense of responsibility and stewardship. "+
-            "1.10 Special Needs and Inclusivity: Stories that feature characters with disabilities or special needs can promote understanding and inclusivity among children, teaching them to appreciate differences and offer support. "+
-            "1.11 Career Exploration and Aspirations: Stories that introduce various careers and explore the importance of ambition and hard work can help children think about their future goals. "+
-            "1.12 Conflict Resolution and Problem Solving: Stories that depict characters resolving conflicts and finding creative solutions to problems can help children develop critical thinking and conflict resolution skills. "+
-            "1.13 Parental Separation and Divorce: Stories that address the challenges children may face when their parents separate or divorce can provide emotional support and guidance. "+
-            "1.14 Character-Building and Values: Stories that emphasize important values like honesty, kindness, responsibility, and respect can help instill positive character traits in children. "+
-            "1.15 Imaginative Adventures: Create imaginative stories that transport your child to exciting and magical worlds. These stories can be great for encouraging creativity and expanding your child's imagination. "+
-            "1.16 Personalized Family Stories: Create a book that tells a story about your own family's adventures or experiences. This could include vacations, special celebrations, or even everyday moments. Personalized stories can be a fantastic way to preserve family memories and share them with your child.";
-/***/
         String prompt=template.replace("{input}",input);
         prompt=prompt.replace("{categories}",categories);
 
         String reply=chatGPT(prompt);
-        return reply;
+        String key=reply;
+        String category=reply;
+        if(reply.length()>3) {
+            int index=reply.indexOf(" ");
+            key=reply.substring(0,index);
+            category=reply.substring(index+1);
+        }
+        UserCategory uc=new UserCategory();
+        uc.setUserInput(input);
+        uc.setAIResponse(category);
+        uc.setKey(key);
+
+        return uc;
 
     }
 
@@ -70,8 +61,8 @@ public class OpenAI {
         String key=getCategoryKey(reply);
         System.out.println("reply:"+reply+" key:"+key);
 ***/
-        String text="My child is suffering from addiction to Meth";
-        String category=getCategoryForUserInput(text);
+        String text="Larger than a skyscraper";
+        UserCategory category=getCategoryForUserInput(text);
         System.out.println("response:"+category);
     }
 

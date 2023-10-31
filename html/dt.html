@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script src="jquery-dev.js"></script>
+</head>
+
+<script>
+   function getInitialAnswer() {
+      var input = { "userInput": $('#initialanswer')[0].value };
+      var url = "decisiontree/usercategory";
+      $.ajax({
+         url:url,
+         dataType: "json",
+         async: false,
+         method: "POST",
+         data: JSON.stringify (input),
+         success: function(data) {
+            getQuestion(data.key);
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+            alert("ERROR:"+errorThrown);
+         }
+      });
+   };
+   function getSelectedQuestion() {
+      var key=$('#question')[0].value;
+      getQuestion(key);
+   };
+   function getQuestion(key) {
+      var url="decisiontree/question";
+      if(key!=undefined) url+="?key="+key;
+      $.ajax({
+         url: url,
+         dataType: "json",
+         async: false,
+         success: function(data) {
+            if(key==undefined) {
+	      $('#initialquestion')[0].innerHTML=data.question.text;
+		    } else {
+            $('#response')[0].innerHTML=JSON.stringify(data);
+            $('#question_label')[0].innerHTML=data.question.text;
+            var options="";
+            for(var i=0; i<data.question.answers.length; ++i) {
+               options+="<option value=\""+data.question.answers[i].key+"\">"+data.question.answers[i].text+"</option>";
+            }
+            $('#question')[0].innerHTML=options;
+	    }
+            console.log("QUESTION:"+data);
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+            alert("ERROR:"+errorThrown);
+         },
+      });
+   };
+   function getAnswers() {
+      var key=$('#question')[0].value;
+      var url="decisiontree/answers?key="+key;
+      $.ajax({
+         url: url,
+         dataType: "json",
+         async: false,
+         success: function(data) {
+			$('#response')[0].innerHTML=JSON.stringify(data);
+	    console.log("ANSWERS:"+data);
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+            alert("ERROR:"+errorThrown);
+         },
+      });
+   };
+   function getAnswer() {
+      var url="decisiontree/usercategory";
+      var input={ "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction" }
+      $.ajax({
+         url: url,
+         dataType: "json",
+         async: false,
+         type: "POST",
+         data: JSON.stringify (input),
+         success: function(data) {
+            console.log("ANSWER:"+data);
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+            alert("ERROR:"+errorThrown);
+         },
+      });
+   };
+</script>
+
+<body onload="getQuestion()">
+
+<h1>Decision Tree</h1>
+<table id='dtTable' class="filters">
+	<tr>
+		<td align="right">Response:</td>
+		<td align="left"><textarea id="response" name="response" rows="5" cols="100">Sample Text</textarea></td>
+	</tr>
+</table>
+<br>
+<br><br>
+<label id="initialquestion">INITIAL QUESTION</label>
+<textarea id="initialanswer" name="initialanswer" rows="2" cols="80"></textarea>
+<button type="button" onclick="getInitialAnswer()">Submit</button>
+<br><br>
+
+<label id="question_label">QUESTION LABEL</label><br>
+<select name="question" id="question">
+	<option value="val1">Value One</option>
+	<option value="val2">Value Two</option>
+</select>
+<button type="button" onclick="getSelectedQuestion()">Submit</button>
+<br><br>
+<button type="button" onclick="getAnswers()">Answers</button>
+
+</body>
+</html>

@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 public class UserCategory {
     private String userInput;
     private String aiResponse;
+    private String key;
 
     public void setUserInput(String input) {
         userInput=input;
@@ -18,6 +19,14 @@ public class UserCategory {
 
     public String getAIResponse() {
         return aiResponse;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key=key;
     }
 
     public UserCategory() {

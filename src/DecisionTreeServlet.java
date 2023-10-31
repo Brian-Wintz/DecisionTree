@@ -2,7 +2,6 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.bkw.dt.Answer;
 import com.bkw.dt.DecisionTree;
 import com.bkw.dt.Question;
 import com.google.gson.Gson;
@@ -40,16 +38,12 @@ public class DecisionTreeServlet extends HttpServlet {
                 e.printStackTrace();
             }
             String json=sb.toString();
-System.out.println("##JSON1:"+json);
             //json=java.net.URLDecoder.decode(json, StandardCharsets.UTF_8.toString());
             Gson gson=new Gson();
             UserCategory uc=gson.fromJson(json, UserCategory.class);
-System.out.println("##UC:"+uc);
             String userInput=uc.getUserInput();
-            String reply=OpenAI.getCategoryForUserInput(userInput);
-            uc.setAIResponse(reply);
+            uc=OpenAI.getCategoryForUserInput(userInput);
             json=gson.toJson(uc);
-System.out.println("##JSON2:"+json);
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             out.println(json);
@@ -120,8 +114,6 @@ System.out.println("##JSON2:"+json);
     public static void main(String[] args) {
         DecisionTree dt=new DecisionTree();
         dt.readFile("com/bkw/dt/dt1.txt");
-        //Question question=dt.getQuestion("1");
-        //System.out.println(question.toJSONString());
         String json=convertAnswersToJSON(dt,"1.3.2.3");
         System.out.println("json:"+json);
     }
