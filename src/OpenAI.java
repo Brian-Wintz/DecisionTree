@@ -5,6 +5,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.bkw.dt.DecisionTree;
+import com.bkw.dt.Question;
+import com.bkw.dt.Answer;
+
 public class OpenAI {
     public static String encode(String text) {
         char[] chars=text.toCharArray();
@@ -24,11 +28,14 @@ public class OpenAI {
     }
 
     public static UserCategory getCategoryForUserInput(String input) {
+        DecisionTree dt=new DecisionTree();
+        dt.readFile("com/bkw/dt/dt1.txt");
         String template="Choose a category most relevant to {input} from the following categories {categories} tell me the category only with no other text.";
-        String categories=
-            "1.1 Small: Size of item is less than or equal to  5 centimeters in height, width or depth. "+
-            "1.2 Medium: Size of item is greater than 5 centimeters in height, width or depth and less than or equal to 20 meters in height, width or depth. "+
-            "1.3 Large: Size of item is greater than 20 meters in height, width or depth.";
+        Question question=dt.getQuestion("1");
+        String categories="";
+        for(Answer answer: question.getAnswers()) {
+            categories+=" "+answer.getKey()+" "+answer.getText();
+        }
         String prompt=template.replace("{input}",input);
         prompt=prompt.replace("{categories}",categories);
 
@@ -61,9 +68,12 @@ public class OpenAI {
         String key=getCategoryKey(reply);
         System.out.println("reply:"+reply+" key:"+key);
 ***/
+/***/
         String text="Larger than a skyscraper";
         UserCategory category=getCategoryForUserInput(text);
         System.out.println("response:"+category);
+/***/
+//System.out.println("KEY:"+decode("izHsE73wKs4PEBGnncFmKGlcmC4UJHypnf8O:WD9zgnkxc1M.lt"))        ;
     }
 
     // This method sends a message to the GPT-3.5 Turbo model and retrieves a response.
