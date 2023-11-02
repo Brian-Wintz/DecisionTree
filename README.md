@@ -5,14 +5,24 @@ A decision tree is made of a tree of questions and answers as illustrated below:
 
 ![image](https://github.com/Brian-Wintz/DecisionTree/assets/133924124/2f8832f6-6247-4a05-90a2-e5659dbd8428)
 
-The circles denote the qustions and the lines represent the possible answers for each question.  Note that there are terminal answers which indicate the decision tree has been navigated to a final answer.  The red lines highlight a potential path to one of the terminal answers for which each answer in the path, including the final answer, can be retrieved.
+The circles denote the qustions and the lines represent the possible answers for each question.  Note that there are terminal answers which indicate the decision tree has been navigated to a final answer.  The red lines highlight a potential path to one of the terminal answers for which each answer and question in the path, including the final answer, can be retrieved.
+
+## Tomcat Setup
+In order to have tomcat run on the normal HTTP and HTTPS ports it is necessary to first modify the conf/server.xml to use the standard ports 80 (HTTP) and 443 (HTTPS).  By default, tomcat comes configured to use port 8080 for HTTP and 8443 for HTTPS.  The modifications to conf.server.xml are **highlighted** below:
+
+    <Connector port="**80**" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="**443**"
+               maxParameterCount="1000"
+               />
+Note that in order to run tomcat on these ports it is necessary to run them as the root user by first running "sudo bash" to start a bash shell running as root.  In doing this you may loose environment variables, such as JAVA_HOME, which will need to be set for this shell.  To leave the shell, enter "exit" (without quotes), which will place you back in the user's login shell.
 
 ## Implementation
-com.bkw.dt.DecisionTree - holds a static HashMap containing the loaded decision tree of questions and answers
-com.bkw.dt.Answer- represents an answer option for a given question and has key pointers to the originating/parent question and the associated child question.  If there is not child question then it is a terminating answer which will have a null pointer for the child question
-com.bkw.dt.Question - represents a question which which is associated with 2 or more Answer instances, as well as a answer key which points to the answer which resulted in this question (or null, if top level question)
+* com.bkw.dt.DecisionTree - holds a static HashMap containing the loaded decision tree of questions and answers
+* com.bkw.dt.Answer- represents an answer option for a given question and has key pointers to the originating/parent question and the associated child question.  If there is not child question then it is a terminating answer which will have a null pointer for the child question
+* com.bkw.dt.Question - represents a question which which is associated with 2 or more Answer instances, as well as a answer key which points to the answer which resulted in this question (or null, if top level question)
 
-The details for these classes is provided below:
+The details for these classes are provided below:
 
 ### com.bkw.dt.Answer
 
@@ -80,17 +90,22 @@ The details for these classes is provided below:
 ### OpenAI
     public static String chatGPT(String message): Process the provided message as a prompt to ChatGPT 3.5 and returns the resulting reply.
     public static String extractContentFromResponse(String response): Extracts the reply from the response to a ChatGPT 3.5 REST API call.
-    public static String getCategoryForUserInput(String input): Calls OpenAI to determine the category which best matches user input.
+    public static UserCategory getCategoryForUserInput(String input): Calls OpenAI to determine the category which best matches user input.
+
 ### UserCategory
 
 ####  Attributes
     private String userInput: Used to hold the user's input text
     private String aiResponse: Used to hold OpenAI's selected category based on the user's input
+    private String key: The key for the resulting category
+    
 #### Methods
     public void setUserInput(String input): Assigns the user's input
     public String getUserInput(): Retrieves the user's input
     public void setAIResponse(String response): Assigns the returned text for which category was selected by OpenAI for the user's text
     public String getAIResponse(): Retrieves the OpenAI selected category
+    public void setKey(String key): Assigns the category's key
+    public String getKey(): Retrieves the category's key
 
 ### DecisionTreeServlet
 
@@ -102,11 +117,11 @@ The details for these classes is provided below:
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     usercategory: Takes user input as posted JSON and returns the best matching category
     Posted JSON input:
-        { "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction" }
+        { "userInput": "Larger than a skyscraper" }
     Resulting JSON output:
         {
-        "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction",
-        "aiResponse": "1. Emotional Well-being and Mental Health"
+        "userInput": "Larger than a skyscraper",
+        "aiResponse": "1.3 Large"
         }
         
 ## Decision Tree File Format
@@ -126,16 +141,29 @@ The {text} value represents the text corresponding to either the question or the
 Note that the lines for all answers must come immediately after the question which they are for.  So the following represents a valid decision tree file format:
 ```
 Q 1 How big is it?
-A 1.1 Small
-A 1.2 Medium
+A 1.1 Small: Size of item is less than or equal to  5 centimeters in height, width or depth.
+A 1.2 Medium: Size of item is greater than 5 centimeters in height, width or depth and less than or equal to 20 meters in height, width or depth.
+A 1.3 Large: Size of item is greater than 20 meters in height, width or depth.Q 1.1 Is it a?
 Q 1.1 Is it a?
 T 1.1.1 Atom
 T 1.1.2 Quark
 Q 1.2 Is it a?
-T 1.2.1 Rabit
+T 1.2.1 Rabbit
 T 1.2.2 Squirrel
+Q 1.3 Is it larger than a house?
+A 1.3.1 Yes
+A 1.3.2 No
+Q 1.3.1 Is it a?
+T 1.3.1.1 Whale
+T 1.3.1.2 Dinosaur
+Q 1.3.2 Is it a?
+T 1.3.2.1 Truck
+T 1.3.2.2 House
+T 1.3.2.3 Elephant
 ```
-Whereas the following is not correct because all the answers do not occur immediately after the question which parents them (question 1.1, with its answers comes before answer 1.2):
+Note that the initial question's answers have additional detail which is passed to OpenAI with the user's free form text to determine which answer best represents their input.
+
+The following is not correct because all the answers do not occur immediately after the question which parents them (question 1.1, with its answers comes before answer 1.2):
 ```
 Q 1 How big is it?
 A 1.1 Small
@@ -150,23 +178,22 @@ T 1.2.2 Squirrel
 A sample dt1.txt decision tree is available in the src/com/bkw/dt directory which is used for testing.
 
 ### REST API Testing
-These REST APIs have been deployed to a google cloud VM and can be accessed through a web browser by calling the following URLs:
+These REST APIs have been deployed to a google cloud VM under a myapp web application and can be accessed through a web browser by calling the following URLs:
 
 Retrieve a question with its answers (key is not needed if requesting a top level question).  The question key values are of the form "N[.N]..." where each question's answer points to the next level question key:<br><br>
-    http://34.82.132.4/decisiontree/question[?key={question key}]
+    http://34.82.132.4/myapp/decisiontree/question[?key={question key}]
 
-    http://34.82.132.4/decisiontree/question?key=1.3
+    http://34.82.132.4/myapp/decisiontree/question?key=1.3
 
     {
       "question": {"key": "1.3", "text": "Is it larger than a house?", "answers": [
           {"key": "1.3.1", "text": "Yes", "nextQuestionKey": "1.3.1", "lastQuestionKey": "1.3"},
           {"key": "1.3.2", "text": "No", "nextQuestionKey": "1.3.2", "lastQuestionKey": "1.3"}
     ]}}
-
 Retrieve the chain of answers for a given answer key, including the specified answer.  Answer key values are also in the "N[.N]..." form.<br><br>
-    http://34.82.132.4/decisiontree/answers?key={answer key}
+    http://34.82.132.4/myapp/decisiontree/answers?key={answer key}
 
-    http://34.82.132.4/decisiontree/answers?key=1.3.1.2
+    [http://34.82.132.4/myapp/decisiontree/answers?key=1.3.1.2](http://34.82.132.4/myapp/decisiontree/answers?key=1.3.1.2)
 
     {
       "answers": [
@@ -188,11 +215,25 @@ Clear out the decision tree to force a reload of the data from the file (used to
     http://34.82.132.4/decisiontree/reset
 
 Request OpenAI to determine which category best matches user's free form text input (POST).<br><br>
-    http://34.82.132.4/decisiontree/usercategory
+    [http://34.82.132.4/decisiontree/usercategory](http://34.82.132.4/myapp/decisiontree/usercategory)
     Posted data:
-        { "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction" }
+        { "userInput": "Larger than a skyscraper" }
     Returned data:
         {
-            "userInput": "My son is feeling sad and suffering from anxiety due to a drug addiction",
-            "aiResponse": "1. Emotional Well-being and Mental Health"
+            "userInput": "Larger than a skyscraper",
+            "aiResponse": "Large",
+            "key": "1.3"
         }
+The configuration of the servlet which exposes these REST APIs through tomcat is configured in the web.xml file contained in the web application's WEB-INF/web.xml file (.../myapp/WEB-INF/web.xml) as shown below:
+
+    <servlet>
+        <servlet-name>DecisionTree</servlet-name>
+        <servlet-class>DecisionTreeServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>DecisionTree</servlet-name>
+        <url-pattern>/decisiontree/*</url-pattern>
+    </servlet-mapping>
+
+The url-pattern entry determines what path, when appended to the web application name (myapp/decisiontree), will be processed through the servlet class specified by the servlet-class entry (DecisionTree).
