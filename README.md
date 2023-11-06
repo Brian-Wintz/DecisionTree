@@ -1,5 +1,5 @@
 # DecisionTree
-The purpose of this project is to implement a decision tree that is exposed through REST APIs for determining the next (or starting) question along with the question's possible answers.  It also allows for processing an answer to provide all the answers that lead up to the specified answer.
+The purpose of this project is to implement a decision tree that is exposed through REST APIs for determining the next (or starting) question along with the question's possible answers.  It also allows for processing an answer to provide all the questions and answers that lead up to the specified answer.
 
 A decision tree is made of a tree of questions and answers as illustrated below:
 
@@ -8,14 +8,33 @@ A decision tree is made of a tree of questions and answers as illustrated below:
 The circles denote the qustions and the lines represent the possible answers for each question.  Note that there are terminal answers which indicate the decision tree has been navigated to a final answer.  The red lines highlight a potential path to one of the terminal answers for which each answer and question in the path, including the final answer, can be retrieved.
 
 ## Tomcat Setup
+Before installing tomcat you need to have a compatible version of Java installed.  For my testing I used the free OpenJDK 21.0.1 version which you can download as a gzip'ed tar file here: https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz.  Once this downloaded file has been uploaded to the linux VM it can be extracted by executing "tar -xzf openjdk-21.0.1_linux-x64_bin.tar.gz" which will install the tomcat files into the current directory.  I created a java directory under my home directory and extracted the files there which created a jdk-21.0.1 sub-directory.  In order to use this java install you'll need to create a new JAVA_HOME and update the existing PATH environment variables as shown below:
+
+    export JAVA_HOME=~/java/jdk-21.0.1
+    export JDK_HOME=~/java/jdk-21.0.1
+    export PATH=$PATH:$JAVA_HOME/bin
+
+These can be added to the .profile file within the user's home directory (~/.profile) so that they get set automatically when the user logs onto the VM.  However, note that if you switch to another user, such as using the root user in order to start/stop tomcat, then these environment variables will need to be set.
+
+Tomcat 8.5.95 (version used for testing) can be dowloaded as a gzip'ed tar file here: https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.95/bin/apache-tomcat-8.5.95.tar.gz.  Once the downloaded file has been uploaded to the linux VM it can be extracted by executing tar -xzf apache-tomcat-8.5.95.tar.gz, which will install the tomcat files into the current directory.
+
 In order to have tomcat run on the normal HTTP and HTTPS ports it is necessary to first modify the conf/server.xml to use the standard ports 80 (HTTP) and 443 (HTTPS).  By default, tomcat comes configured to use port 8080 for HTTP and 8443 for HTTPS.  The modifications to conf.server.xml are **highlighted** below:
 
     <Connector port="**80**" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="**443**"
                maxParameterCount="1000"
-               />
-Note that in order to run tomcat on these ports it is necessary to run them as the root user by first running "sudo bash" to start a bash shell running as root.  In doing this you may loose environment variables, such as JAVA_HOME, which will need to be set for this shell.  To leave the shell, enter "exit" (without quotes), which will place you back in the user's login shell.
+               />'
+Note that in order to run tomcat on these ports it is necessary to run them as the root user by first running "sudo bash" to start a bash shell running as root.  In doing this you may loose environment variables, such as JAVA_HOME, which will need to be set for this root shell.  To leave the shell, enter "exit" (without quotes), which will place you back in the user's login shell.  Within this shell you can start tomcat using the bin/startup.sh script or stop tomcat by running the bin/shutdown.sh script.
+
+### Files Copied into Tomcat
+
+### Dependent gson jar file
+Copy the gson*.jar file from the lib github project to the {tomcat_home}/lib directory.  This makes this jar available to all web applications running in this tomcat instance
+
+### Compiled *.class files
+Copy the *.class files from the github target directory to the {tomcat_home}/webapps/{webapp_name}/WEB-INF/classes directory.  For this example I use "myapp" as the name for my {webapp_name}.  If you have not previously done so, you will need to create the {webapp_name}/WEB-INF/classes sub-directories by executing mkdir -p {webapp_name}/WEB-INF/classes (using the name of your web application in place of {webapp_name}).
+Copy the *.class files and dt1.txt file from the github target/com/qad/dt directory to the {tomcat_home}/webapps/{webapps_name}/WEB-INF/classes/com/qad/dt directory. Of you have not previously done so, you will need to create the com/bkw/dt sub-directories by executing mkdir -p com/bkw/dt from the {webapp_name}/WEB-INF/classes directory.
 
 ## Implementation
 * com.bkw.dt.DecisionTree - holds a static HashMap containing the loaded decision tree of questions and answers
