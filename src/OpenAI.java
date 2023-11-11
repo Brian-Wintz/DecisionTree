@@ -95,7 +95,7 @@ public class OpenAI {
     // This method sends a message to the GPT-3.5 Turbo model and retrieves a response.
     public static String chatGPT(String message) {
         String url = "https://api.openai.com/v1/chat/completions";
-        String apiKey = decode("izHsE73wKs4PEBGnncFmKGlcmC4UJHypnf8O:WD9zgnkxc1M.lt"); // OpenAI API key
+        String apiKey = decode("{encoded OpenAI key}"); // OpenAI API key
         String model = "gpt-3.5-turbo"; // The model version for chatGPT
 
         try {
