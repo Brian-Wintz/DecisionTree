@@ -3,8 +3,7 @@ The purpose of this project is to implement a decision tree that is exposed thro
 
 A decision tree is made of a tree of questions and answers as illustrated below:
 
-![image](https://github.com/Brian-Wintz/DecisionTree/assets/133924124/22572d32-30da-447c-9229-470d896b8fea)
-
+![image](https://github.com/Brian-Wintz/DecisionTree/assets/133924124/e3ef6f9d-4324-4c75-968c-c4246b9efd7d)
 
 The circles denote the qustions and the lines represent the possible answers for each question.  Note that there are terminal answers which indicate the decision tree has been navigated to a final answer.  The red lines highlight a potential path to one of the terminal answers for which each answer and question in the path, including the final answer, can be retrieved.
 
